@@ -1,0 +1,36 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: meu_postgres_mateusreis
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: senha_super_secreta
+      POSTGRES_DB: banco_teste
+    volumes:
+      - pg_dados:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  app:
+    build: .
+    container_name: minha_api_node_mateusreis
+    restart: on-failure
+    ports:
+      - "8073:8080"
+    environment:
+      DB_HOST: db
+      DB_USER: admin
+      DB_PASSWORD: senha_super_secreta
+      DB_NAME: banco_teste
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+volumes:
+  pg_dados:
+
+networks:
+  app-network:
+    driver: bridge
